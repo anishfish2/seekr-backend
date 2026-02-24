@@ -492,6 +492,17 @@ async def frame_submit(sid, data: dict):
     if not frame_b64:
         return
 
+    # Relay frame to other players in the room for live display
+    code = _local_sid_to_room.get(sid)
+    player_id = _local_sid_to_player.get(sid)
+    if code and player_id:
+        await sio.emit(
+            "player:frame",
+            {"playerId": player_id, "frameData": frame_b64},
+            room=code,
+            skip_sid=sid,
+        )
+
     try:
         if "," in frame_b64:
             frame_b64 = frame_b64.split(",", 1)[1]
