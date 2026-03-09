@@ -15,6 +15,7 @@ from game_state import (
     make_player,
     make_room,
     make_round,
+    unique_player_name,
 )
 from object_bank import get_all_ids, get_object
 
@@ -387,7 +388,9 @@ async def room_join(sid, data: dict):
         await sio.emit("error", {"message": "Game already in progress"}, to=sid)
         return
 
-    player = make_player(player_name)
+    existing_names = [p["name"] for p in room["players"]]
+    final_name = unique_player_name(player_name, existing_names)
+    player = make_player(final_name)
     room["players"].append(player)
 
     await redis_state.set_room(code, room)
