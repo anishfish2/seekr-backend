@@ -7,6 +7,17 @@ def generate_room_code() -> str:
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
+def unique_player_name(desired: str, existing_names: list) -> str:
+    """Return `desired` uppercased, or `DESIRED (N)` if already taken."""
+    base = desired.strip().upper()
+    if base not in existing_names:
+        return base
+    n = 1
+    while f"{base} ({n})" in existing_names:
+        n += 1
+    return f"{base} ({n})"
+
+
 def make_player(name: str) -> dict:
     n = name.strip().upper()
     return {
